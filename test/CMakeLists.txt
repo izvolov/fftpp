@@ -1,10 +1,13 @@
 find_package(doctest 2.3.3 REQUIRED)
 
 add_executable(fftpp-unit-tests test_main.cpp)
-target_sources(fftpp-unit-tests PRIVATE fftpp/test.cpp)
+target_sources(fftpp-unit-tests
+    PRIVATE
+        fftpp/fft.cpp
+)
 target_link_libraries(fftpp-unit-tests
     PRIVATE
-        fftpp::library
+        fftpp::headers
         doctest::doctest
 )
 
@@ -12,8 +15,8 @@ find_program(GCOVR_EXECUTABLE gcovr)
 if(FFTPP_COVERAGE AND GCOVR_EXECUTABLE)
     message(STATUS "Измерение покрытия кода тестами включено")
 
-    target_compile_options(fftpp_library PUBLIC --coverage)
-    target_link_options(fftpp_library PUBLIC -fprofile-arcs)
+    target_compile_options(fftpp-unit-tests PUBLIC --coverage)
+    target_link_options(fftpp-unit-tests PUBLIC -fprofile-arcs)
 
     add_custom_target(coverage
         COMMAND

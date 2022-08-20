@@ -5,7 +5,7 @@
 ###################################################################################################
 
 cmake_minimum_required(VERSION 3.14)
-project(fftpp VERSION 1.0 LANGUAGES CXX)
+project(fftpp VERSION 0.1 LANGUAGES CXX)
 
 get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
 
@@ -20,6 +20,11 @@ if (IS_SUBPROJECT AND NOT DEFINED FFTPP_TESTING)
     set(FFTPP_TESTING OFF)
 endif()
 
+if (IS_SUBPROJECT AND NOT DEFINED FFTPP_BENCHMARKING)
+    message(STATUS "Замеры производительности fftpp в режиме подмодуля выключены")
+    set(FFTPP_BENCHMARKING OFF)
+endif()
+
 if (IS_SUBPROJECT AND NOT DEFINED FFTPP_DOC)
     message(STATUS "Автодокументация для fftpp выключена в режиме подмодуля")
     set(FFTPP_DOC OFF)
@@ -31,6 +36,7 @@ if (IS_SUBPROJECT AND NOT DEFINED FFTPP_WANDBOX)
 endif()
 
 option(FFTPP_TESTING "Включить модульное тестирование" ON)
+option(FFTPP_BENCHMARKING "Включить замеры производительности" ON)
 option(FFTPP_COVERAGE "Включить измерение покрытия кода тестами" OFF)
 option(FFTPP_DOC "Включить документирование" ON)
 option(FFTPP_WANDBOX "Включить онлайн-песочницу" ON)
@@ -87,24 +93,13 @@ add_library(fftpp::headers ALIAS fftpp_headers)
 
 ###################################################################################################
 ##
-##      Компилируемая библиотека
-##
-###################################################################################################
-
-add_library(fftpp_library src/fftpp/source.cpp)
-target_link_libraries(fftpp_library PUBLIC fftpp_headers)
-
-add_library(fftpp::library ALIAS fftpp_library)
-
-###################################################################################################
-##
 ##      Установка
 ##
 ###################################################################################################
 
 install(DIRECTORY include/fftpp DESTINATION include)
 
-install(TARGETS fftpp_headers fftpp_library EXPORT fftppConfig)
+install(TARGETS fftpp_headers EXPORT fftppConfig)
 install(EXPORT fftppConfig NAMESPACE fftpp:: DESTINATION share/fftpp/cmake)
 
 include(CMakePackageConfigHelpers)
@@ -126,6 +121,18 @@ if(NOT FFTPP_TESTING)
     message(STATUS "Тестирование проекта fftpp выключено")
 else()
     add_subdirectory(test)
+endif()
+
+###################################################################################################
+##
+##      Замеры
+##
+###################################################################################################
+
+if(NOT FFTPP_BENCHMARKING)
+    message(STATUS "Замеры производительности fftpp выключены")
+else()
+    add_subdirectory(benchmark)
 endif()
 
 ###################################################################################################

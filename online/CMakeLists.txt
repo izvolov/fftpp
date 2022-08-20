@@ -1,7 +1,7 @@
 add_executable(fftpp-example fftpp_example.cpp)
 target_link_libraries(fftpp-example
     PRIVATE
-        fftpp::library
+        fftpp::headers
 )
 
 add_custom_target(run-fftpp-example ALL COMMAND fftpp-example)

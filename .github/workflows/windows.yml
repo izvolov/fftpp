@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019]
+        os: [windows-2022]
         platform: [Win32, x64]
         build_type: ["Debug", "Release"]
 

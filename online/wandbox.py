@@ -22,8 +22,8 @@ if len(sys.argv) == 1 + 3:
 
     request = json.dumps({
         "code": code,
-        "options": "warning,c++17",
-        "compiler": "gcc-7.3.0",
+        "options": "warning,c++2a",
+        "compiler": "gcc-10.2.0",
         "compiler-option-raw": "-I{}".format(relative_include_directory),
         "codes": prepare_includes(project_directory, header_files),
         "save": True})
