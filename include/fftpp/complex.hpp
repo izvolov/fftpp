@@ -15,8 +15,7 @@ namespace fftpp
         template <std::integral I>
         constexpr auto operator () (I degree) const
         {
-            constexpr auto pi = 3.1415926;
-            const auto angle = -2.0 * pi / static_cast<double>(degree);
+            const auto angle = -2.0 * std::numbers::pi / static_cast<double>(degree);
             return std::complex<double>(std::cos(angle), std::sin(angle));
         }
     };
