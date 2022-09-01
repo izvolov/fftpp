@@ -13,7 +13,7 @@ namespace fftpp
     struct primitive_root_of_unity_t<std::complex<double>>
     {
         template <std::integral I>
-        auto operator () (I degree) const
+        constexpr auto operator () (I degree) const
         {
             constexpr auto pi = 3.1415926;
             const auto angle = -2.0 * pi / static_cast<double>(degree);
@@ -22,7 +22,7 @@ namespace fftpp
     };
 
     template <>
-    auto unity<std::complex<double>> ()
+    constexpr auto unity<std::complex<double>> ()
     {
         return std::complex<double>(1.0);
     }
