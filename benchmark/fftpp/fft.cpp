@@ -1,25 +1,24 @@
-#include <fftpp/fft.hpp>
 #include <fftpp/complex.hpp>
+#include <fftpp/fft.hpp>
 
+#include <algorithm>
 #include <chrono>
 #include <complex>
+#include <cstddef>
 #include <iostream>
+#include <numeric>
 #include <random>
 #include <string>
+#include <vector>
 
-int main (int /*argc*/, const char * argv[])
+template <typename F>
+void test (std::string name, std::size_t size, std::size_t repetitions, const F & f)
 {
-    const auto size = std::stoul(argv[1]);
-    const auto repetitions = std::stoul(argv[2]);
-
     auto distribution = std::normal_distribution<>(0, 1.0);
     auto generator = std::default_random_engine{};
 
-
     std::vector<std::complex<double>> before(size);
     std::vector<std::complex<double>> after(size);
-
-    const auto fft = fftpp::fft_t<std::complex<double>>(size);
 
     auto total = std::chrono::steady_clock::duration{0};
     for (auto iteration = 0ul; iteration < repetitions; ++iteration)
@@ -31,7 +30,7 @@ int main (int /*argc*/, const char * argv[])
             });
 
         const auto iteration_start_time = std::chrono::steady_clock::now();
-        fft(before.begin(), after.begin());
+        f(size, before.begin(), after.begin());
         const auto iteration_end_time = std::chrono::steady_clock::now();
 
         std::clog << std::accumulate(after.begin(), after.end(), std::complex{0.0}) << std::endl;
@@ -39,5 +38,41 @@ int main (int /*argc*/, const char * argv[])
         total += (iteration_end_time - iteration_start_time);
     }
 
-    std::cout << std::chrono::duration_cast<std::chrono::duration<double>>(total).count() / static_cast<double>(repetitions) << std::endl;
+    const auto duration_seconds =
+        std::chrono::duration_cast<std::chrono::duration<double>>(total).count();
+    std::cout << name << ": \t" << duration_seconds / static_cast<double>(repetitions) << std::endl;
+}
+
+void test_all (std::size_t size, std::size_t repetitions)
+{
+    const auto fft_from_scratch =
+        [] (auto size, auto from, auto to)
+        {
+            const auto fft = fftpp::fft_t<std::complex<double>>(size);
+            fft(from, to);
+        };
+    test("Без предпосчёта", size, repetitions, fft_from_scratch);
+
+    const auto ready_fft = fftpp::fft_t<std::complex<double>>(size);
+    const auto fft_prepared =
+        [& ready_fft] (auto /*size*/, auto from, auto to)
+        {
+            ready_fft(from, to);
+        };
+    test("С предпосчётом", size, repetitions, fft_prepared);
+}
+
+int main (int argc, const char * argv[])
+{
+    if (argc == 1 + 2)
+    {
+        const auto size = std::stoul(argv[1]);
+        const auto repetitions = std::stoul(argv[2]);
+
+        test_all(size, repetitions);
+    }
+    else
+    {
+        std::cout << "Использование: " << argv[0] << " <размер> <число повторений>" << std::endl;
+    }
 }
