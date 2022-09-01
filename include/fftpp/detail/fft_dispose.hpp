@@ -1,7 +1,7 @@
 #pragma once
 
-#include <fftpp/detail/reverse_lower_bits.hpp>
 #include <fftpp/utility/intlog2.hpp>
+#include <fftpp/utility/reverse_lower_bits.hpp>
 
 #include <cassert>
 #include <concepts>

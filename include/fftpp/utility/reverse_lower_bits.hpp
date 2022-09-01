@@ -2,7 +2,7 @@
 
 #include <concepts>
 
-namespace fftpp::detail
+namespace fftpp
 {
     template <std::integral I, std::integral J>
     constexpr I reverse_lower_bits (I n, J count)
