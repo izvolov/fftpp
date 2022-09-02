@@ -12,8 +12,8 @@ namespace fftpp
         template <std::integral D>
         constexpr D intlog2_impl (D n)
         {
-            const auto signed_n = static_cast<std::make_unsigned_t<D>>(n);
-            const auto power_of_2 = std::bit_width(signed_n) - 1;
+            const auto unsigned_n = static_cast<std::make_unsigned_t<D>>(n);
+            const auto power_of_2 = std::bit_width(unsigned_n) - 1;
             return static_cast<D>(power_of_2);
         }
     }
