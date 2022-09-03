@@ -1,4 +1,5 @@
 #include <fftpp/utility/bit_reversal_permutation.hpp>
+#include <fftpp/utility/table_bit_reversal_permutation.hpp>
 #include <fftpp/utility/intlog2.hpp>
 #include <fftpp/utility/reverse_lower_bits.hpp>
 
@@ -61,6 +62,13 @@ void test_all (std::size_t size, std::size_t repetitions)
             fftpp::bit_reversal_permutation(indices.begin(), indices.size());
         };
     test("Итеративно", size, repetitions, iterative_bit_reverse);
+
+    const auto hybrid_bit_reverse =
+        [] (auto /*size*/, auto & indices)
+        {
+            fftpp::table_bit_reversal_permutation(indices.begin(), indices.size());
+        };
+    test("Гибридно", size, repetitions, hybrid_bit_reverse);
 }
 
 int main (int argc, const char * argv[])
