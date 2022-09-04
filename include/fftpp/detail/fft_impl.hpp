@@ -2,6 +2,7 @@
 
 #include <fftpp/detail/butterfly.hpp>
 
+#include <cassert>
 #include <concepts>
 #include <iterator>
 
