@@ -5,6 +5,7 @@
 #include <fftpp/detail/fill_w_nk.hpp>
 #include <fftpp/field.hpp>
 #include <fftpp/utility/is_power_of_2.hpp>
+#include <fftpp/utility/table_bit_reversal_permutation.hpp>
 
 #include <cassert>
 #include <concepts>
@@ -37,11 +38,14 @@ namespace fftpp
         template <std::integral I>
         explicit fft_t (I size):
             m_w_nk{},
+            m_bit_reverse_permutation_indices{},
             m_size(static_cast<std::size_t>(size))
         {
             assert(size > 0);
             assert(is_power_of_2(m_size));
+
             init_w_nk();
+            init_bit_reverse_permutation_indices();
         }
 
         template <std::random_access_iterator I, std::random_access_iterator J>
@@ -52,7 +56,7 @@ namespace fftpp
 
             if (size > 1)
             {
-                detail::fft_dispose(first, size, result);
+                detail::fft_dispose(first, size, result, m_bit_reverse_permutation_indices.begin());
                 detail::fft_impl(result, size, m_w_nk.begin());
             }
 
@@ -66,7 +70,14 @@ namespace fftpp
             detail::fill_w_nk(m_w_nk.begin(), m_size);
         }
 
+        void init_bit_reverse_permutation_indices ()
+        {
+            m_bit_reverse_permutation_indices.resize(m_size, 0);
+            table_bit_reversal_permutation(m_bit_reverse_permutation_indices.begin(), m_size);
+        }
+
         std::vector<K> m_w_nk;
+        std::vector<std::size_t> m_bit_reverse_permutation_indices;
         std::size_t m_size;
     };
 }
