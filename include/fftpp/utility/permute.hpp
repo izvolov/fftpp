@@ -1,15 +1,9 @@
 #pragma once
 
+#include <cassert>
 #include <concepts>
 #include <cstddef>
 #include <iterator>
-
-#ifndef NDEBUG
-#include <algorithm>
-#include <cassert>
-#include <type_traits>
-#include <vector>
-#endif
 
 namespace fftpp
 {
@@ -81,35 +75,18 @@ namespace fftpp
     >
     constexpr J permute (I first, D length, J result, F index)
     {
-#ifndef NDEBUG
-        const auto size = static_cast<std::size_t>(length);
-        std::vector<std::size_t> new_indices;
-        new_indices.reserve(size);
-#endif
         auto old_index = D{0};
         while (old_index < length)
         {
             const auto new_index =
                 static_cast<std::iter_difference_t<J>>(index(old_index));
-#ifndef NDEBUG
-            new_indices.push_back(static_cast<std::size_t>(new_index));
-#endif
+            assert(static_cast<D>(new_index) < length);
 
             result[new_index] = *first;
 
             ++old_index;
             ++first;
         }
-
-#ifndef NDEBUG
-        // Проверяем, что произошла именно перестановка, т.е.:
-        // - Все индексы уникальны;
-        // - Все индексы попадают в размер исходного диапазона.
-        std::sort(new_indices.begin(), new_indices.end());
-        new_indices.erase(std::unique(new_indices.begin(), new_indices.end()), new_indices.end());
-        assert(new_indices.size() == size);
-        assert(std::ranges::all_of(new_indices, [size] (auto x) {return x < size;}));
-#endif
 
         return result + static_cast<std::iter_difference_t<J>>(length);
     }
