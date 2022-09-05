@@ -9,20 +9,24 @@
 
 namespace fftpp
 {
-    template <>
-    struct primitive_root_of_unity_t<std::complex<double>>
+    template <std::floating_point F>
+    struct primitive_root_of_unity_t<std::complex<F>>
     {
         template <std::integral I>
         constexpr auto operator () (I degree) const
         {
-            const auto angle = -2.0 * std::numbers::pi / static_cast<double>(degree);
-            return std::complex<double>(std::cos(angle), std::sin(angle));
+            constexpr auto pi = std::acos(F{-1.0});
+            const auto angle = F{-2.0} * pi / static_cast<F>(degree);
+            return std::complex<F>(std::cos(angle), std::sin(angle));
         }
     };
 
-    template <>
-    constexpr auto unity<std::complex<double>> ()
+    template <std::floating_point F>
+    struct unity_t<std::complex<F>>
     {
-        return std::complex<double>(1.0);
-    }
+        constexpr auto operator () () const
+        {
+            return std::complex<F>(F{1.0});
+        }
+    };
 }

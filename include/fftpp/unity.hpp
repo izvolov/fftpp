@@ -3,5 +3,11 @@
 namespace fftpp
 {
     template <typename K>
-    auto unity ();
+    struct unity_t
+    {
+        K operator () () const;
+    };
+
+    template <typename K>
+    constexpr auto unity = unity_t<K>{};
 }
