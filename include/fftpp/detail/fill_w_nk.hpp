@@ -10,7 +10,7 @@ namespace fftpp::detail
 {
     // Требуется size - 1 доступных позиций.
     template <std::random_access_iterator I, std::integral D = std::iter_difference_t<I>>
-        requires(field<std::iter_value_t<I>>)
+        requires(field<std::iter_value_t<I>, D>)
     I fill_w_nk (I first, D size)
     {
         using K = std::iter_value_t<I>;
