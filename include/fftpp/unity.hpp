@@ -1,8 +1,5 @@
 #pragma once
 
-#include <complex>
-#include <concepts>
-
 namespace fftpp
 {
     template <typename K>
@@ -17,17 +14,9 @@ namespace fftpp
             static_assert
             (
                 you_must_specialize_unity_for_you_type(),
-                "specialize unity_t<K> to use fftpp::fft<K>"
+                "did you forget to #include <fftpp/complex.hpp>? "
+                "unity_t<K> must be specialized to use fftpp::fft<K>"
             );
-        }
-    };
-
-    template <std::floating_point F>
-    struct unity_t<std::complex<F>>
-    {
-        constexpr auto operator () () const
-        {
-            return std::complex<F>(F{1.0});
         }
     };
 

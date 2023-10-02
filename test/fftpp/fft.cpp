@@ -1,3 +1,4 @@
+#include <fftpp/complex.hpp>
 #include <fftpp/fft.hpp>
 
 #include <doctest/doctest.h>
