@@ -77,7 +77,7 @@ namespace fftpp
         }
 
         std::vector<K> m_w_nk;
-        std::vector<std::size_t> m_bit_reverse_permutation_indices;
+        std::vector<std::uint32_t> m_bit_reverse_permutation_indices;
         std::size_t m_size;
     };
 }
