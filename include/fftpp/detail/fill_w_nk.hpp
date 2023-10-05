@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fftpp/field.hpp>
+#include <fftpp/concept/field.hpp>
 
 #include <algorithm>
 #include <concepts>

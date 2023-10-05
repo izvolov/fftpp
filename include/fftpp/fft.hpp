@@ -1,9 +1,9 @@
 #pragma once
 
+#include <fftpp/concept/field.hpp>
 #include <fftpp/detail/fft_dispose.hpp>
 #include <fftpp/detail/fft_impl.hpp>
 #include <fftpp/detail/fill_w_nk.hpp>
-#include <fftpp/field.hpp>
 #include <fftpp/utility/is_power_of_2.hpp>
 #include <fftpp/utility/table_bit_reversal_permutation.hpp>
 
