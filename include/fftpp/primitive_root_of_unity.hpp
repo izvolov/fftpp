@@ -17,7 +17,7 @@ namespace fftpp
             static_assert
             (
                 you_must_specialize_primitive_root_of_unity_for_you_type(),
-                "did you forget to #include <fftpp/complex.hpp>? "
+                "did you forget to #include <fftpp/complex.hpp> or <fftpp/ring.hpp>? "
                 "primitive_root_of_unity_t<K> must be specialized to use fftpp::fft<K>"
             );
         }
