@@ -175,7 +175,7 @@ namespace fftpp
     private:
         void init_w_nk ()
         {
-            m_w_nk.resize(m_size - 1);
+            m_w_nk.resize(m_size - 1 + intlog2(m_size));
             detail::fill_w_nk(m_w_nk.begin(), m_size, primitive_root_of_unity<K>);
         }
 

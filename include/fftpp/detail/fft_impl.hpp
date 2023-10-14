@@ -28,7 +28,7 @@ namespace fftpp::detail
             }
 
             using std::advance;
-            advance(w_nk, n / 2);
+            advance(w_nk, n / 2 + 1);
         }
     }
 }
