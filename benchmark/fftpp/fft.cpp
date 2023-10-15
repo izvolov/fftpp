@@ -1,5 +1,6 @@
 #include <fftpp/complex.hpp>
 #include <fftpp/fft.hpp>
+#include <fftpp/inverse_fft.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -60,6 +61,14 @@ void test_all (std::size_t size, std::size_t repetitions)
             ready_fft(from, to);
         };
     test("С предпосчётом", size, repetitions, fft_prepared);
+
+    const auto inverse_ready_fft = inverse(ready_fft);
+    const auto inverse_fft_prepared =
+        [& inverse_ready_fft] (auto /*size*/, auto from, auto to)
+        {
+            inverse_ready_fft(from, to);
+        };
+    test("Обратное", size, repetitions, inverse_fft_prepared);
 }
 
 int main (int argc, const char * argv[])

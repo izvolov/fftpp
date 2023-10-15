@@ -1,5 +1,6 @@
 #include <fftpp/complex.hpp>
 #include <fftpp/fft.hpp>
+#include <fftpp/inverse_fft.hpp>
 
 #include <doctest/doctest.h>
 
@@ -102,5 +103,25 @@ TEST_CASE("Используется только необходимая част
     for (auto i = result.size() / 2; i < result.size(); ++i)
     {
         CHECK(result[i] == 333.0);
+    }
+}
+
+TEST_CASE("Обратное БПФ возвращает сигнал в исходное состояние")
+{
+    const auto size = 256ul;
+    const auto frequencies = std::set<std::size_t>{2, 6, 19, 101};
+    const auto signal = make_signal(size, frequencies);
+
+    const auto fft = fftpp::fft_t<std::complex<double>>(size);
+    auto result = std::vector<std::complex<double>>(size);
+    fft(signal.begin(), result.begin());
+
+    auto inverse_result = std::vector<std::complex<double>>(size);
+    inverse(fft)(result.begin(), inverse_result.begin());
+
+    for (auto i = 0ul; i < size; ++i)
+    {
+        CHECK(inverse_result[i].imag() == doctest::Approx(0.0).epsilon(1e-8));
+        CHECK(signal[i] == doctest::Approx(inverse_result[i].real()).epsilon(1e-8));
     }
 }
