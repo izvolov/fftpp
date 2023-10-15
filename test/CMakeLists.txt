@@ -6,6 +6,7 @@ target_sources(fftpp-unit-tests
         fftpp/concept/subscriptable.cpp
         fftpp/fft.cpp
         fftpp/ring.cpp
+        fftpp/utility/binpow.cpp
         fftpp/utility/bit_reversal_permutation.cpp
         fftpp/utility/permute.cpp
         fftpp/utility/reverse_lower_bits.cpp
