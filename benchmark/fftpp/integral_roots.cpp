@@ -29,32 +29,32 @@ constexpr fftpp::ring_t<N> primitive_root (N degree)
 
 int main (int /*argc*/, const char * argv[])
 {
-    auto max_power_of_2 = std::stoul(argv[1]);
-    for (auto i = 1ul; i <= max_power_of_2; ++i)
+    const auto max_power_of_2 = std::stoul(argv[1]);
+    auto root = primitive_root(max_power_of_2);
+
+    auto x = root;
+    for (auto j = 1; j < (1 << max_power_of_2); ++j)
     {
-        const auto primitive_root_i = primitive_root(i);
-        std::cout << "Кандидат для степени " << i << ": " << primitive_root_i << std::endl;
-
-        auto x = primitive_root_i;
-        for (auto j = 1; j < (1 << i); ++j)
+        if (x == 1u)
         {
-            if (x == 1u)
-            {
-                const auto error_message =
-                    "Никакая промежуточная степень корня не может быть единицей";
-                throw std::runtime_error(error_message);
-            }
-            x *= primitive_root_i;
-        }
-
-        if (x != 1u)
-        {
-            const auto error_message = "После последней степени не идёт единица";
+            const auto error_message =
+                "Никакая промежуточная степень корня не может быть единицей";
             throw std::runtime_error(error_message);
         }
+        x *= root;
+    }
 
+    if (x != 1u)
+    {
+        const auto error_message = "После последней степени не идёт единица";
+        throw std::runtime_error(error_message);
+    }
+
+    for (auto i = max_power_of_2; i > 0; --i)
+    {
         std::cout
-            << "Первообразный корень для степени " << i << ": " << primitive_root_i
+            << "Первообразный корень для степени " << i << ": " << root
             << std::endl;
+        root *= root;
     }
 }
