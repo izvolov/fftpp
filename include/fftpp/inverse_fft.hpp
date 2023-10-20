@@ -1,9 +1,6 @@
 #pragma once
 
 #include <fftpp/concept/field.hpp>
-#include <fftpp/detail/fft_dispose.hpp>
-#include <fftpp/detail/fft_impl.hpp>
-#include <fftpp/detail/inverse_w_nk.hpp>
 #include <fftpp/fft.hpp>
 #include <fftpp/inverse_power_of_2.hpp>
 
@@ -50,8 +47,22 @@ namespace fftpp
                     Apply inverse FFT
 
                 \details
-                    In contrast to the direct FFT uses the inverse coefficients `w_nk`, and
-                    multiplies each element of the result by the inverse element of `size()`.
+                    To calculate the inverse FFT, we need to take advantage of the fact that we
+                    need to find
+
+                        InverseDFT = 1/n * (A(w_n^-0), A(w_n^-1), ..., A(w_n^-(n-1)), n = size()
+
+                    At the same time,
+
+                        w_n^-k = w_n^(n-k)
+
+                    Therefore,
+
+                        InverseDFT = 1/n * (A(w_n^0), A(w_n^(n-1)), ..., A(w_n^1)
+
+                    In another words, we need to reverse positions [1, n) of the resulting
+                    range and multiply each element of the result by the inverse element of
+                    `size()`.
 
                     Complexity:
                     -   Time: `O(size() * log(size()))`;
@@ -72,8 +83,21 @@ namespace fftpp
                     Вычисление обратного БПФ
 
                 \details
-                    В отличие от прямого БПФ использует обратные коэффициенты `w_nk`, а также
-                    домножает каджый элемент результата на обратный к `size()` элемент.
+                    Для вычисления обратного БПФ нужно воспользоваться тем фактом, что требуется
+                    найти
+
+                        InverseDFT = 1/n * (A(w_n^-0), A(w_n^-1), ..., A(w_n^-(n-1)), n = size()
+
+                    При этом
+
+                        w_n^-k = w_n^(n-k)
+
+                    Значит,
+
+                        InverseDFT = 1/n * (A(w_n^0), A(w_n^(n-1)), ..., A(w_n^1)
+
+                    Иными словами, нужно развернуть массив на позициях [1, n) задом наперёд
+                    и домножить каждый элемент результата на обратный к `size()` элемент.
 
                     Асимптотика:
                     -   Время: `O(size() * log(size()))`;
@@ -90,31 +114,19 @@ namespace fftpp
                     Из итератора `result` доступно хотя бы `size()` элементов.
 
             \~
-                \see size
-                \see detail::fft_dispose
-                \see detail::fft_impl
-                \see detail::inverse_w_nk_t
+                \see fft_t::size
                 \see inverse_power_of_2
          */
         template <std::random_access_iterator I, std::random_access_iterator J>
             requires(std::convertible_to<std::iter_value_t<I>, K>)
         J operator () (I first, J result) const
         {
-            const auto size = static_cast<std::iter_difference_t<I>>(m_fft.size());
+            const auto result_end = m_fft(first, result);
 
-            if (size > 1)
-            {
-                detail::fft_dispose(first, size, result, m_fft.bitrev().begin());
-                detail::fft_impl(result, size, m_fft.w_nk().begin(),
-                    [] (auto w_nk, auto n)
-                    {
-                        return detail::inverse_w_nk_t(w_nk, n);
-                    });
-            }
-
+            std::reverse(result + 1, result_end);
             return
-                std::transform(result, result + size, result,
-                    [inverse_n = inverse_power_of_2<K>(size)] (auto x)
+                std::transform(result, result_end, result,
+                    [inverse_n = inverse_power_of_2<K>(m_fft.size())] (auto x)
                     {
                         return x * inverse_n;
                     });

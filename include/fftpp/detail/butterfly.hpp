@@ -1,8 +1,5 @@
 #pragma once
 
-#include <fftpp/concept/subscriptable.hpp>
-
-#include <cstddef>
 #include <iterator>
 #include <tuple>
 
@@ -15,17 +12,16 @@ namespace fftpp::detail
         std::tie(left, right) = std::make_tuple(left + right, left - right);
     }
 
-    template <std::forward_iterator I, std::sentinel_for<I> S, subscriptable J>
-    void multi_butterfly (I first1, S last1, I first2, J w_n)
+    template <std::forward_iterator I, std::sentinel_for<I> S, std::forward_iterator J>
+    void multi_butterfly (I first1, S last1, I first2, J w_nk)
     {
-        auto k = std::ptrdiff_t{0};
         while (first1 != last1)
         {
-            butterfly(*first1, *first2, w_n[k]);
+            butterfly(*first1, *first2, *w_nk);
 
             ++first1;
             ++first2;
-            ++k;
+            ++w_nk;
         }
     }
 }

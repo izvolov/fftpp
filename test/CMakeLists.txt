@@ -3,7 +3,6 @@ include(${PROJECT_SOURCE_DIR}/cmake/doctest.cmake)
 add_executable(fftpp-unit-tests test_main.cpp)
 target_sources(fftpp-unit-tests
     PRIVATE
-        fftpp/concept/subscriptable.cpp
         fftpp/fft_complex.cpp
         fftpp/ring.cpp
         fftpp/utility/binpow.cpp

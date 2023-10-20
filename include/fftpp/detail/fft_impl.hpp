@@ -1,7 +1,6 @@
 #pragma once
 
 #include <fftpp/detail/butterfly.hpp>
-#include <fftpp/utility/first_of.hpp>
 
 #include <cassert>
 #include <concepts>
@@ -13,11 +12,9 @@ namespace fftpp::detail
     <
         std::random_access_iterator I,
         std::integral D = std::iter_difference_t<I>,
-        std::random_access_iterator J,
-        std::regular_invocable<J, D> P = first_of_t
+        std::random_access_iterator J
     >
-        requires(subscriptable<std::invoke_result_t<P, J, D>>)
-    void fft_impl (I first, D size, J w_nk, P proj = {})
+    void fft_impl (I first, D size, J w_nk)
     {
         assert(size >= 0);
 
@@ -27,7 +24,7 @@ namespace fftpp::detail
             {
                 auto begin = first + k;
                 auto end = begin + n / 2;
-                multi_butterfly(begin, end, end, proj(w_nk, n));
+                multi_butterfly(begin, end, end, w_nk);
             }
 
             using std::advance;
