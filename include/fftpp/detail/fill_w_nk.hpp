@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fftpp/concept/field.hpp>
+#include <fftpp/primitive_root_of_unity.hpp>
 
 #include <algorithm>
 #include <concepts>
@@ -30,8 +31,6 @@ namespace fftpp::detail
                 Iterator to the beginning of a range to write the result to.
             \param size
                 Size of the FFT.
-            \param primitive_root
-                Unary function, returning primitive root of a group of the given order.
 
             \returns
                 Iterator in the given range, one past the last written element.
@@ -41,8 +40,6 @@ namespace fftpp::detail
                 iterator.
             \pre
                 `size = 2 ^ n, n ∈ ℕ`
-            \pre
-                `primitive_root(m)` returns primitive root of a multiplicative group of order `m`.
 
         \~russian
             \brief
@@ -65,8 +62,6 @@ namespace fftpp::detail
                 Итератор на начало диапазона, в который нужно записать результат.
             \param size
                 Размер БПФ.
-            \param primitive_root
-                Одноместная функция, возвращающая первообразный корень заданной степени.
 
             \returns
                 Итератор за последним записанным элементом.
@@ -75,29 +70,21 @@ namespace fftpp::detail
                 Из итератора `first` доступно хотя бы `size - 1 + log2(size)` элементов.
             \pre
                 `size = 2 ^ n, n ∈ ℕ`
-            \pre
-                `primitive_root(m)` возвращает образующий элемент для мультипликативной группы
-                порядка `m`.
 
         \~
             \see primitive_root_of_unity
             \see unity
             \see fft
      */
-    template
-    <
-        std::random_access_iterator I,
-        std::integral D = std::iter_difference_t<I>,
-        std::regular_invocable<D> R
-    >
+    template <std::random_access_iterator I, std::integral D = std::iter_difference_t<I>>
         requires(field<std::iter_value_t<I>, D>)
-    I fill_w_nk (I first, D size, R primitive_root)
+    I fill_w_nk (I first, D size)
     {
         using K = std::iter_value_t<I>;
 
         for (auto n = D{2}; n <= size; n *= 2)
         {
-            const auto w_n = primitive_root(n);
+            const auto w_n = primitive_root_of_unity<K>(n);
 
             *first = unity<K>();
             const auto last_for_n =
