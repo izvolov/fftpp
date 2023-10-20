@@ -2,7 +2,6 @@
 
 #include <fftpp/concept/field.hpp>
 #include <fftpp/detail/fill_w_nk.hpp>
-#include <fftpp/utility/intlog2.hpp>
 #include <fftpp/utility/is_power_of_2.hpp>
 #include <fftpp/utility/table_bit_reversal_permutation.hpp>
 
@@ -119,7 +118,7 @@ namespace fftpp
     private:
         void init_w_nk ()
         {
-            m_w_nk.resize(m_size - 1 + intlog2(m_size));
+            m_w_nk.resize(m_size - 1);
             detail::fill_w_nk(m_w_nk.begin(), m_size);
         }
 
