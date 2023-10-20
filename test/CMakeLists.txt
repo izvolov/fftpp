@@ -4,6 +4,7 @@ add_executable(fftpp-unit-tests test_main.cpp)
 target_sources(fftpp-unit-tests
     PRIVATE
         fftpp/fft_complex.cpp
+        fftpp/fft_ring.cpp
         fftpp/ring.cpp
         fftpp/utility/binpow.cpp
         fftpp/utility/bit_reversal_permutation.cpp

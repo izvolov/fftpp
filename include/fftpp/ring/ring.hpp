@@ -18,7 +18,7 @@ namespace fftpp
         constexpr ring_t () = default;
 
         template <std::integral M>
-        constexpr explicit ring_t (M value):
+        constexpr ring_t (M value):
             m_value
             (
                 static_cast<N>(static_cast<std::uint64_t>(value) >= modulo ?
