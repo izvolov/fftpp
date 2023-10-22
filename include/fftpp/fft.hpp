@@ -29,6 +29,11 @@ namespace fftpp
                 The type of the elements that will make up the range to which the FFT will be
                 applied.
                 Must satisfy the requirements of `field` concept.
+            \tparam PrecalcSize
+                Maximal FFT size, for which the precalculated table of `w_nk` will be used.
+
+            \pre
+                `PrecalcSize = 2 ^ m, m ∈ ℕ`
 
         \~russian
             \brief
@@ -42,11 +47,18 @@ namespace fftpp
             \tparam K
                 Тип элементов, к диапазону которых будет применяться БПФ.
                 Должен удовлетворять требованиям концепции `field`.
+            \tparam PrecalcSize
+                Максимальный размер БПФ, для которого будет использоваться предпосчитанная таблица
+                для `w_nk`.
+
+            \pre
+                `PrecalcSize = 2 ^ m, m ∈ ℕ`
 
         \~
             \see field
      */
-    template <field K>
+    template <field K, std::size_t PrecalcSize = 256>
+        requires(is_power_of_2(PrecalcSize))
     class fft_t
     {
     public:
@@ -177,7 +189,7 @@ namespace fftpp
         void init_w_nk ()
         {
             m_w_nk.resize(m_size - 1);
-            detail::table_fill_w_nk(m_w_nk.begin(), m_size);
+            detail::table_fill_w_nk<PrecalcSize>(m_w_nk.begin(), m_size);
         }
 
         void init_bit_reverse_permutation_indices ()

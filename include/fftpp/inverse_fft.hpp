@@ -19,6 +19,11 @@ namespace fftpp
                 The type of the elements that will make up the range to which the inverse FFT
                 will be applied.
                 Must satisfy the requirements of `field` concept.
+            \tparam PrecalcSize
+                Maximal FFT size, for which the precalculated table of `w_nk` will be used.
+
+            \pre
+                `PrecalcSize = 2 ^ m, m ∈ ℕ`
 
         \~russian
             \brief
@@ -27,16 +32,22 @@ namespace fftpp
             \tparam K
                 Тип элементов, к диапазону которых будет применяться обратное БПФ.
                 Должен удовлетворять требованиям концепции `field`.
+            \tparam PrecalcSize
+                Максимальный размер БПФ, для которого будет использоваться предпосчитанная таблица
+                для `w_nk`.
+
+            \pre
+                `PrecalcSize = 2 ^ m, m ∈ ℕ`
 
         \~
             \see fft_t
             \see field
      */
-    template <field K>
+    template <field K, std::size_t PrecalcSize>
     class inverse_fft_t
     {
     public:
-        explicit inverse_fft_t (const fft_t<K> & fft):
+        explicit inverse_fft_t (const fft_t<K, PrecalcSize> & fft):
             m_fft(fft)
         {
         }
@@ -133,15 +144,15 @@ namespace fftpp
         }
 
     private:
-        const fft_t<K> & m_fft;
+        const fft_t<K, PrecalcSize> & m_fft;
     };
 
-    template <field K>
-    inverse_fft_t (const fft_t<K> &) -> inverse_fft_t<K>;
+    template <field K, std::size_t PrecalcSize>
+    inverse_fft_t (const fft_t<K, PrecalcSize> &) -> inverse_fft_t<K, PrecalcSize>;
 
-    template <field K>
-    inverse_fft_t<K> inverse (const fft_t<K> & fft)
+    template <field K, std::size_t PrecalcSize>
+    inverse_fft_t<K, PrecalcSize> inverse (const fft_t<K, PrecalcSize> & fft)
     {
-        return inverse_fft_t<K>(fft);
+        return inverse_fft_t<K, PrecalcSize>(fft);
     }
 }

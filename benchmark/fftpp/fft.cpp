@@ -54,7 +54,7 @@ void test_all (std::size_t size, std::size_t repetitions)
         };
     test("Без предпосчёта", size, repetitions, fft_from_scratch);
 
-    const auto ready_fft = fftpp::fft_t<std::complex<double>>(size);
+    const auto ready_fft = fftpp::fft_t<std::complex<double>, 65536>(size);
     const auto fft_prepared =
         [& ready_fft] (auto /*size*/, auto from, auto to)
         {
