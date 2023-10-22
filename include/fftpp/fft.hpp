@@ -3,7 +3,7 @@
 #include <fftpp/concept/field.hpp>
 #include <fftpp/detail/fft_dispose.hpp>
 #include <fftpp/detail/fft_impl.hpp>
-#include <fftpp/detail/fill_w_nk.hpp>
+#include <fftpp/detail/table_fill_w_nk.hpp>
 #include <fftpp/utility/is_power_of_2.hpp>
 #include <fftpp/utility/table_bit_reversal_permutation.hpp>
 
@@ -87,7 +87,7 @@ namespace fftpp
                     `size = 2 ^ n, n ∈ ℕ`
 
                 \see is_power_of_2
-                \see detail::fill_w_nk
+                \see detail::table_fill_w_nk
                 \see table_bit_reversal_permutation
          */
         template <std::integral I>
@@ -177,7 +177,7 @@ namespace fftpp
         void init_w_nk ()
         {
             m_w_nk.resize(m_size - 1);
-            detail::fill_w_nk(m_w_nk.begin(), m_size);
+            detail::table_fill_w_nk(m_w_nk.begin(), m_size);
         }
 
         void init_bit_reverse_permutation_indices ()
