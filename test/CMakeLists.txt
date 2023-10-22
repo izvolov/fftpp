@@ -8,8 +8,10 @@ target_sources(fftpp-unit-tests
         fftpp/ring.cpp
         fftpp/utility/binpow.cpp
         fftpp/utility/bit_reversal_permutation.cpp
+        fftpp/utility/cos.cpp
         fftpp/utility/permute.cpp
         fftpp/utility/reverse_lower_bits.cpp
+        fftpp/utility/sin.cpp
 )
 target_link_libraries(fftpp-unit-tests
     PRIVATE
