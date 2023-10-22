@@ -5,6 +5,7 @@
 #include <fftpp/detail/fft_impl.hpp>
 #include <fftpp/detail/table_fill_w_nk.hpp>
 #include <fftpp/utility/is_power_of_2.hpp>
+#include <fftpp/utility/overloaded.hpp>
 #include <fftpp/utility/table_bit_reversal_permutation.hpp>
 
 #include <cassert>
@@ -12,6 +13,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
+#include <variant>
 #include <vector>
 
 namespace fftpp
@@ -174,7 +176,7 @@ namespace fftpp
             if (size > 1)
             {
                 detail::fft_dispose(first, size, result, m_bit_reverse_permutation_indices.begin());
-                detail::fft_impl(result, size, m_w_nk.begin());
+                detail::fft_impl(result, size, w_nk());
             }
 
             return result + size;
@@ -188,8 +190,16 @@ namespace fftpp
     private:
         void init_w_nk ()
         {
-            m_w_nk.resize(m_size - 1);
-            detail::table_fill_w_nk<PrecalcSize>(m_w_nk.begin(), m_size);
+            if (m_size <= PrecalcSize)
+            {
+                m_w_nk = detail::base_w_nk_table<K, PrecalcSize>.data();
+            }
+            else
+            {
+                auto w_nk = std::vector<K>(m_size - 1);
+                detail::table_fill_w_nk<PrecalcSize>(w_nk.begin(), m_size);
+                m_w_nk = std::move(w_nk);
+            }
         }
 
         void init_bit_reverse_permutation_indices ()
@@ -198,7 +208,21 @@ namespace fftpp
             table_bit_reversal_permutation(m_bit_reverse_permutation_indices.begin(), m_size);
         }
 
-        std::vector<K> m_w_nk;
+        const K * w_nk () const
+        {
+            return
+                std::visit
+                (
+                    overloaded
+                    {
+                        [] (const std::vector<K> & v) {return v.data();},
+                        [] (const K * w) {return w;}
+                    },
+                    m_w_nk
+                );
+        }
+
+        std::variant<std::vector<K>, const K *> m_w_nk;
         std::vector<std::uint32_t> m_bit_reverse_permutation_indices;
         std::size_t m_size;
     };
