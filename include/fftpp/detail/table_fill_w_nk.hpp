@@ -14,7 +14,10 @@
 namespace fftpp::detail
 {
     template <field K, std::size_t Size>
-    constexpr auto base_w_nk_table =
+#if defined __GNUC__ && __GNUC__ >= 10
+    constexpr
+#endif
+    inline const auto base_w_nk_table =
         []{
             std::array<K, Size - 1> coefficients;
             fill_w_nk(coefficients.begin(), Size);
