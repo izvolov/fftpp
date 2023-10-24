@@ -2,6 +2,7 @@
 
 #include <fftpp/primitive_root_of_unity.hpp>
 #include <fftpp/utility/cos.hpp>
+#include <fftpp/utility/pi.hpp>
 #include <fftpp/utility/sin.hpp>
 
 #include <cmath>
@@ -16,8 +17,7 @@ namespace fftpp
         template <std::integral I>
         constexpr auto operator () (I degree) const
         {
-            constexpr auto pi = F{3.141592653589793238462643383279502884};
-            const auto angle = F{-2.0} * pi / static_cast<F>(degree);
+            const auto angle = F{-2.0} * pi_v<F> / static_cast<F>(degree);
             return std::complex<F>(cos(angle), sin(angle));
         }
     };

@@ -1,6 +1,7 @@
 #include <fftpp/complex.hpp>
 #include <fftpp/fft.hpp>
 #include <fftpp/inverse_fft.hpp>
+#include <fftpp/utility/pi.hpp>
 
 #include <doctest/doctest.h>
 
@@ -19,7 +20,7 @@ namespace
         for (auto i = 0ul; i < signal.size(); ++i)
         {
             const auto t =
-                2.0 * 3.1415926 * static_cast<double>(i) / static_cast<double>(signal.size());
+                2.0 * fftpp::pi * static_cast<double>(i) / static_cast<double>(signal.size());
             for (auto frequency: frequencies)
             {
                 signal[i] += std::sin(static_cast<double>(frequency) * t);
