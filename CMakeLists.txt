@@ -88,6 +88,7 @@ target_include_directories(fftpp_headers INTERFACE
     $<INSTALL_INTERFACE:include>
 )
 target_compile_features(fftpp_headers INTERFACE cxx_std_20)
+set_target_properties(fftpp_headers PROPERTIES EXPORT_NAME headers)
 
 add_library(fftpp::headers ALIAS fftpp_headers)
 
