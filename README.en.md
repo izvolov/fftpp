@@ -1,6 +1,8 @@
 [:ru: Оригинал](README.md)
 
-Fast Fourier Transform (FFT)
-============================
+FFT++
+=====
+
+FFT (Fast Fourier Transform) done in C++ way.
 
 Stay tuned.
