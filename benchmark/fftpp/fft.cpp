@@ -118,7 +118,7 @@ void test_all (std::size_t size, std::size_t repetitions, UnaryFunction statisti
             const auto fft = fftpp::fft_t<std::complex<double>>(size);
             fft(from, to);
         };
-    test_complex("Без предпосчёта", fft_from_scratch, size, repetitions, statistic);
+    test_complex("fftpp.complex.from_scratch", fft_from_scratch, size, repetitions, statistic);
 
     const auto ready_fft = fftpp::fft_t<std::complex<double>, 65536>(size);
     const auto fft_prepared =
@@ -126,7 +126,7 @@ void test_all (std::size_t size, std::size_t repetitions, UnaryFunction statisti
         {
             ready_fft(from, to);
         };
-    test_complex("С предпосчётом", fft_prepared, size, repetitions, statistic);
+    test_complex("fftpp.complex.forward", fft_prepared, size, repetitions, statistic);
 
     const auto inverse_ready_fft = inverse(ready_fft);
     const auto inverse_fft_prepared =
@@ -134,7 +134,7 @@ void test_all (std::size_t size, std::size_t repetitions, UnaryFunction statisti
         {
             inverse_ready_fft(from, to);
         };
-    test_complex("Обратное", inverse_fft_prepared, size, repetitions, statistic);
+    test_complex("fftpp.complex.inverse", inverse_fft_prepared, size, repetitions, statistic);
 
     const auto mod_fft = fftpp::fft_t<fftpp::ring_t<std::uint32_t>, 65536>(size);
     const auto mod_fft_prepared =
@@ -142,14 +142,14 @@ void test_all (std::size_t size, std::size_t repetitions, UnaryFunction statisti
         {
             mod_fft(from, to);
         };
-    test_mod("Целочисленное", mod_fft_prepared, size, repetitions, statistic);
+    test_mod("fftpp.integral.forward", mod_fft_prepared, size, repetitions, statistic);
 
     const auto inverse_mod_fft_prepared =
         [& mod_fft] (auto /*size*/, auto from, auto to)
         {
             inverse(mod_fft)(from, to);
         };
-    test_mod("Обратное целочисленное", inverse_mod_fft_prepared, size, repetitions, statistic);
+    test_mod("fftpp.integral.inverse", inverse_mod_fft_prepared, size, repetitions, statistic);
 }
 
 struct min_fn
