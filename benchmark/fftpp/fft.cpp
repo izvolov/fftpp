@@ -14,8 +14,17 @@
 #include <vector>
 
 template <typename F, typename Value, typename G>
-void test_base (std::string name, std::size_t size, std::size_t repetitions, const F & fft,
-    std::vector<Value> & before, std::vector<Value> & after, const G & gen)
+void
+    test_base
+    (
+        std::string name,
+        const F & fft,
+        std::size_t size,
+        std::size_t repetitions,
+        std::vector<Value> & before,
+        std::vector<Value> & after,
+        const G & gen
+    )
 {
     auto total = std::chrono::steady_clock::duration{0};
     for (auto iteration = 0ul; iteration < repetitions; ++iteration)
@@ -37,7 +46,14 @@ void test_base (std::string name, std::size_t size, std::size_t repetitions, con
 }
 
 template <typename F>
-void test_complex (std::string name, std::size_t size, std::size_t repetitions, const F & f)
+void
+    test_complex
+    (
+        std::string name,
+        const F & f,
+        std::size_t size,
+        std::size_t repetitions
+    )
 {
     auto distribution = std::normal_distribution<>(0, 1.0);
     auto generator = std::default_random_engine{};
@@ -45,7 +61,7 @@ void test_complex (std::string name, std::size_t size, std::size_t repetitions, 
     std::vector<std::complex<double>> before(size);
     std::vector<std::complex<double>> after(size);
 
-    test_base(name, size, repetitions, f, before, after,
+    test_base(name, f, size, repetitions, before, after,
         [& distribution, & generator] (auto first, auto last)
         {
             std::generate(first, last,
@@ -57,7 +73,14 @@ void test_complex (std::string name, std::size_t size, std::size_t repetitions, 
 }
 
 template <typename F>
-void test_mod (std::string name, std::size_t size, std::size_t repetitions, const F & f)
+void
+    test_mod
+    (
+        std::string name,
+        const F & f,
+        std::size_t size,
+        std::size_t repetitions
+    )
 {
     auto distribution = std::uniform_int_distribution<std::uint16_t>(0, 65535);
     auto generator = std::default_random_engine{};
@@ -65,7 +88,7 @@ void test_mod (std::string name, std::size_t size, std::size_t repetitions, cons
     std::vector<fftpp::ring_t<std::uint32_t>> before(size);
     std::vector<fftpp::ring_t<std::uint32_t>> after(size);
 
-    test_base(name, size, repetitions, f, before, after,
+    test_base(name, f, size, repetitions, before, after,
         [& distribution, & generator] (auto first, auto last)
         {
             std::generate(first, last,
@@ -84,7 +107,7 @@ void test_all (std::size_t size, std::size_t repetitions)
             const auto fft = fftpp::fft_t<std::complex<double>>(size);
             fft(from, to);
         };
-    test_complex("Без предпосчёта", size, repetitions, fft_from_scratch);
+    test_complex("Без предпосчёта", fft_from_scratch, size, repetitions);
 
     const auto ready_fft = fftpp::fft_t<std::complex<double>, 65536>(size);
     const auto fft_prepared =
@@ -92,7 +115,7 @@ void test_all (std::size_t size, std::size_t repetitions)
         {
             ready_fft(from, to);
         };
-    test_complex("С предпосчётом", size, repetitions, fft_prepared);
+    test_complex("С предпосчётом", fft_prepared, size, repetitions);
 
     const auto inverse_ready_fft = inverse(ready_fft);
     const auto inverse_fft_prepared =
@@ -100,7 +123,7 @@ void test_all (std::size_t size, std::size_t repetitions)
         {
             inverse_ready_fft(from, to);
         };
-    test_complex("Обратное", size, repetitions, inverse_fft_prepared);
+    test_complex("Обратное", inverse_fft_prepared, size, repetitions);
 
     const auto mod_fft = fftpp::fft_t<fftpp::ring_t<std::uint32_t>, 65536>(size);
     const auto mod_fft_prepared =
@@ -108,14 +131,14 @@ void test_all (std::size_t size, std::size_t repetitions)
         {
             mod_fft(from, to);
         };
-    test_mod("Целочисленное", size, repetitions, mod_fft_prepared);
+    test_mod("Целочисленное", mod_fft_prepared, size, repetitions);
 
     const auto inverse_mod_fft_prepared =
         [& mod_fft] (auto /*size*/, auto from, auto to)
         {
             inverse(mod_fft)(from, to);
         };
-    test_mod("Обратное целочисленное", size, repetitions, inverse_mod_fft_prepared);
+    test_mod("Обратное целочисленное", inverse_mod_fft_prepared, size, repetitions);
 }
 
 int main (int argc, const char * argv[])
