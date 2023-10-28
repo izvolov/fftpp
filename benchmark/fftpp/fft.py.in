@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from subprocess import Popen, PIPE
+import argparse
+import numpy as np
+import matplotlib.pyplot as plt
+import sys
+
+def measure (sizes, attempts):
+    measurements = {}
+
+    command_template = "@CMAKE_BINARY_DIR@/benchmark/fftpp/fftbench {} {} {} 2>/dev/null"
+
+    for size, attempts in zip(sizes, attempts):
+        command = command_template.format(size, attempts, 'mean')
+        sys.stderr.write(command + '\n');
+        results = Popen(command, shell=True, stdin=PIPE, stdout=PIPE).stdout.read().splitlines()
+
+        for algorithm, time in [(a.decode('utf8'), float(t)) for a, t in [item.split() for item in results]]:
+            times = measurements.setdefault(algorithm, [])
+            times += [time]
+
+    return measurements
+
+def plot (sizes, measurements, file_name):
+    plt.rc('font',**{'family':'verdana'})
+    plt.figure(num=1)
+    plt.title(u'Быстрое преобразование Фурье', size=14)
+    plt.xlabel(u'Количество элементов в массиве, шт', size=10)
+    plt.ylabel(u'Среднее время прогона, с', size=10)
+    plt.yscale('log')
+    plt.grid(True)
+
+    x = np.array(range(0, len(sizes)))
+
+    for algorithm, times in measurements.items():
+        y = np.array(times)
+        plt.plot(x, y, label=algorithm)
+        plt.xticks(x, sizes)
+
+    plt.legend(loc='upper left')
+    plt.tight_layout()
+    plt.savefig(file_name, format='png')
+
+def table (sizes, measurements, file_name):
+    f = open(file_name, 'w')
+
+    header_template = u''.join(['| {:<20} '] * (1 + len(measurements.items()))) + u'|\n'
+    row_template = u'| {:<20} ' + u''.join(['| {:<20.2e} '] * (len(measurements.items()))) + u'|\n'
+
+    table_string = header_template.format(u'Размер массива', *[a for a, _ in measurements.items()])
+    table_string += u''.join(['| ' + '-' * 20 + ' '] * (1 + len(measurements.items()))) + u'|\n'
+    for i in range(0, len(sizes)):
+        table_string += row_template.format(sizes[i], *[times[i] for _, times in measurements.items()])
+
+    f.write(table_string)
+
+def make_size_attempts (min_power, max_power, max_attempts):
+    sizes = []
+    attempts = []
+
+    power = min_power
+    while power <= max_power:
+        sizes.append(int(2 ** power))
+        attempts.append(int(max_attempts / power))
+        power += 1
+
+    return sizes, attempts
+
+def parse_command_line (options):
+    parser = argparse.ArgumentParser(options[0])
+    parser.add_argument('--prefix', type=str, default='fft',
+        help='Префикс выходного файла')
+    parser.add_argument('--min_power', type=int, default=1,
+        help='Минимальный размер БПФ')
+    parser.add_argument('--max_power', type=int, default=16,
+        help='Максимальный размер БПФ')
+    parser.add_argument('--attempts', type=int, default=10000,
+        help='Максимальное количество итераций')
+    args = parser.parse_args(options[1:])
+    return args.prefix, args.min_power, args.max_power, args.attempts
+
+prefix, min_power, max_power, max_attempts = parse_command_line(sys.argv)
+sizes, attempts = make_size_attempts(min_power, max_power, max_attempts)
+
+measurements = measure(sizes, attempts)
+
+file_name = '_'.join((prefix, str(min_power), str(max_power), str(max_attempts)))
+plot(sizes, measurements, file_name + '.png')
+table(sizes, measurements, file_name + '.txt')

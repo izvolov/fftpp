@@ -9,3 +9,5 @@ target_link_libraries(introot PRIVATE fftpp::headers)
 
 add_executable(inverse inverse_elements.cpp)
 target_link_libraries(inverse PRIVATE fftpp::headers)
+
+configure_file(fft.py.in fft.py @ONLY)
