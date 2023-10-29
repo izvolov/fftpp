@@ -3,6 +3,10 @@
 #include <fftpp/inverse_fft.hpp>
 #include <fftpp/ring.hpp>
 
+#if defined FFTPP_BENCH_FFTW
+#include <fftw3.h>
+#endif
+
 #include <algorithm>
 #include <chrono>
 #include <complex>
@@ -150,6 +154,23 @@ void test_all (std::size_t size, std::size_t repetitions, UnaryFunction statisti
             inverse(mod_fft)(from, to);
         };
     test_mod("fftpp.integral.inverse", inverse_mod_fft_prepared, size, repetitions, statistic);
+
+#if defined FFTPP_BENCH_FFTW
+    fftw_complex * in = static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * size));
+    fftw_complex * out = static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * size));
+    fftw_plan p = fftw_plan_dft_1d(static_cast<int>(size), in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    const auto fftw =
+        [& p, in, out] (auto size, auto from, auto to)
+        {
+            std::copy_n(from, size, reinterpret_cast<std::complex<double> *>(in));
+            fftw_execute(p);
+            std::copy_n(reinterpret_cast<std::complex<double> *>(out), size, to);
+        };
+    test_complex("FFTW", fftw, size, repetitions, statistic);
+    fftw_destroy_plan(p);
+    fftw_free(in);
+    fftw_free(out);
+#endif
 }
 
 struct min_fn
