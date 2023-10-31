@@ -15,6 +15,7 @@ else()
             ${MYLIB_DOCTEST_REPOSITORY}
         GIT_TAG
             "v${MYLIB_DOCTEST_VERSION}"
+        SYSTEM
     )
     FetchContent_MakeAvailable(doctest)
 endif()
