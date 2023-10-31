@@ -8,7 +8,7 @@
 template <std::unsigned_integral N>
 constexpr fftpp::ring_t<N> primitive_root (N degree)
 {
-    for (auto x = fftpp::ring_t<N>{2}; ; ++x)
+    for (auto x = fftpp::ring_t<N>{2}; x < std::numeric_limits<fftpp::ring_t<N>>::max(); ++x)
     {
         auto y = x;
         for (auto power = N{2}; power <= degree; ++power)
