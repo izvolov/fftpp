@@ -19,10 +19,14 @@ jobs:
             package: "g++-11"
           - name: "g++-12"
             package: "g++-12"
+          - name: "g++-13"
+            package: "g++-13"
           - name: "clang++-13"
             package: "clang-13"
           - name: "clang++-14"
             package: "clang-14"
+          - name: "clang++-15"
+            package: "clang-15"
         build_type: ["Debug", "Release"]
 
     runs-on: ${{matrix.os}}
