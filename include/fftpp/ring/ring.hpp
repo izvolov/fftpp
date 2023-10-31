@@ -75,8 +75,10 @@ namespace fftpp
         }
 
     private:
-        template <std::unsigned_integral M>
-        friend std::ostream & operator << (std::ostream &, ring_t<M>);
+        friend std::ostream & operator << (std::ostream & stream, ring_t x)
+        {
+            return stream << "ring_t<" << typeid(N).name() << ">{" << x.m_value << "}";
+        }
 
         static constexpr std::uint64_t raw_sum (std::uint64_t x, std::uint64_t y)
         {
@@ -133,11 +135,5 @@ namespace fftpp
     {
         x *= y;
         return x;
-    }
-
-    template <std::unsigned_integral N>
-    std::ostream & operator << (std::ostream & stream, ring_t<N> x)
-    {
-        return stream << "ring_t<" << typeid(N).name() << ">{" << x.m_value << "}";
     }
 }
