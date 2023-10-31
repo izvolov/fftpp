@@ -32,7 +32,7 @@ void test (std::string name, std::size_t size, std::size_t repetitions, const F 
         std::sort(indices.begin(), indices.end());
 
         std::vector<std::uint16_t> expected(size);
-        std::iota(expected.begin(), expected.end(), 0);
+        std::iota(expected.begin(), expected.end(), std::uint16_t{0});
         assert(indices == expected);
     }
 
