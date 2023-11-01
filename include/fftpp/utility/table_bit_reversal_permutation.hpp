@@ -51,7 +51,7 @@ namespace fftpp
                 std::transform(base_table.begin(), base_table.begin() + size, indices_first,
                     [bit_difference] (auto x)
                     {
-                        return x >> bit_difference;
+                        return static_cast<std::iter_value_t<I>>(x >> bit_difference);
                     });
         }
     }

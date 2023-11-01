@@ -4,7 +4,7 @@
 ##
 ###################################################################################################
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.25)
 project(fftpp VERSION 0.1 LANGUAGES CXX)
 
 get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
