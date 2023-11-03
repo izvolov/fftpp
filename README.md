@@ -161,10 +161,16 @@ target_link_libraries(program PRIVATE fftpp::headers)
 
 0.  Система сборки [CMake](https://cmake.org) версии 3.25 или выше;
 1.  Любой компилятор, который сносно поддерживает стандарт C++20, например, GCC 10 или Clang 13. Заведомо работающие конфигурации перечислены в [интеграционных скриптах](.github/workflows);
-2.  Библиотека тестирования [doctest](https://github.com/doctest/doctest) [Не обязательно\*];
-3.  [Doxygen](http://doxygen.nl) [Не обязательно].
+2.  Библиотека [FFTW](http://fftw.org) для проведения замеров [не обязательно\*].
+3.  Библиотека тестирования [doctest](https://github.com/doctest/doctest) [Не обязательно\*\*];
+4.  [Doxygen](http://doxygen.nl) [Не обязательно].
 
-> \*) Можно миновать этап сборки и тестирования, если при сборке с помощью `CMake` выключить опцию `FFTPP_TESTING`:
+> \*) Можно включить сравнительные замеры с библиотекой FFTW. Для этого нужно при сборке с помощью `CMake` включить опцию `FFTPP_BENCH_FFTW` (по умолчанию она выключена):
+>
+> ```shell
+> cmake -DCMAKE_BUILD_TYPE=Release path/to/fftpp -FFTPP_BENCH_FFTW=ON
+> ```
+> \*\*) Можно миновать этап сборки и тестирования, если при сборке с помощью `CMake` выключить опцию `FFTPP_TESTING`:
 >
 > ```shell
 > cmake -DCMAKE_BUILD_TYPE=Release path/to/fftpp -DFFTPP_TESTING=OFF
