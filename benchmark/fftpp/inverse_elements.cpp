@@ -6,10 +6,9 @@
 #include <stdexcept>
 #include <string>
 
-template <std::unsigned_integral N>
-constexpr fftpp::ring_t<N> inverse (fftpp::ring_t<N> n)
+constexpr fftpp::ring30 inverse (fftpp::ring30 n)
 {
-    return fftpp::binpow(n, fftpp::ring_t<N>::modulo - 2);
+    return fftpp::binpow(n, fftpp::ring30::modulo - 2);
 }
 
 int main (int /*argc*/, const char * argv[])
@@ -17,7 +16,7 @@ int main (int /*argc*/, const char * argv[])
     auto max_power_of_2 = std::stoul(argv[1]);
     for (auto i = 1ul; i <= max_power_of_2; ++i)
     {
-        const auto n = fftpp::ring_t{1u << i};
+        const auto n = fftpp::ring30{1u << i};
         std::cout << "Элемент, для которого ищется обратное: " << n << std::endl;
 
         const auto inverse_n = inverse(n);

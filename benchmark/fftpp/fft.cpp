@@ -85,7 +85,7 @@ void
         });
 }
 
-template <typename F, typename UnaryFunction>
+template <typename Ring, typename F, typename UnaryFunction>
 void
     test_mod
     (
@@ -96,11 +96,11 @@ void
         UnaryFunction statistic
     )
 {
-    auto distribution = std::uniform_int_distribution<std::uint16_t>(0, 65535);
+    auto distribution = std::uniform_int_distribution<typename Ring::representation_type>(0);
     auto generator = std::default_random_engine{};
 
-    std::vector<fftpp::ring_t<std::uint32_t>> before(size);
-    std::vector<fftpp::ring_t<std::uint32_t>> after(size);
+    std::vector<Ring> before(size);
+    std::vector<Ring> after(size);
 
     test_base(name, f, size, repetitions, statistic, before, after,
         [& distribution, & generator] (auto first, auto last)
@@ -108,7 +108,7 @@ void
             std::generate(first, last,
                 [& distribution, & generator]
                 {
-                    return fftpp::ring_t<std::uint32_t>{distribution(generator)};
+                    return Ring{distribution(generator)};
                 });
         });
 }
@@ -140,20 +140,35 @@ void test_all (std::size_t size, std::size_t repetitions, UnaryFunction statisti
         };
     test_complex("fftpp.complex.inverse", inverse_fft_prepared, size, repetitions, statistic);
 
-    const auto mod_fft = fftpp::fft_t<fftpp::ring_t<std::uint32_t>, 65536>(size);
+    const auto mod_fft = fftpp::fft_t<fftpp::ring30, 65536>(size);
     const auto mod_fft_prepared =
         [& mod_fft] (auto /*size*/, auto from, auto to)
         {
             mod_fft(from, to);
         };
-    test_mod("fftpp.integral.forward", mod_fft_prepared, size, repetitions, statistic);
+    test_mod<fftpp::ring30>("fftpp.ring30.forward", mod_fft_prepared, size, repetitions, statistic);
 
     const auto inverse_mod_fft_prepared =
         [& mod_fft] (auto /*size*/, auto from, auto to)
         {
             inverse(mod_fft)(from, to);
         };
-    test_mod("fftpp.integral.inverse", inverse_mod_fft_prepared, size, repetitions, statistic);
+    test_mod<fftpp::ring30>("fftpp.ring30.inverse", inverse_mod_fft_prepared, size, repetitions, statistic);
+
+    const auto mod_u16_fft = fftpp::fft_t<fftpp::ring16, 65536>(size);
+    const auto mod_u16_fft_prepared =
+        [& mod_u16_fft] (auto /*size*/, auto from, auto to)
+        {
+            mod_u16_fft(from, to);
+        };
+    test_mod<fftpp::ring16>("fftpp.ring16.forward", mod_u16_fft_prepared, size, repetitions, statistic);
+
+    const auto inverse_mod_u16_fft_prepared =
+        [& mod_u16_fft] (auto /*size*/, auto from, auto to)
+        {
+            inverse(mod_u16_fft)(from, to);
+        };
+    test_mod<fftpp::ring16>("fftpp.ring16.inverse", inverse_mod_u16_fft_prepared, size, repetitions, statistic);
 
 #if defined FFTPP_BENCH_FFTW
     fftw_complex * in = static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * size));

@@ -6,9 +6,9 @@
 #include <string>
 
 template <std::unsigned_integral N>
-constexpr fftpp::ring_t<N> primitive_root (N degree)
+constexpr fftpp::ring30 primitive_root (N degree)
 {
-    for (auto x = fftpp::ring_t<N>{2}; x < std::numeric_limits<fftpp::ring_t<N>>::max(); ++x)
+    for (auto x = fftpp::ring30{2}; x < std::numeric_limits<fftpp::ring30>::max(); ++x)
     {
         auto y = x;
         for (auto power = N{2}; power <= degree; ++power)
@@ -16,7 +16,7 @@ constexpr fftpp::ring_t<N> primitive_root (N degree)
             y *= y;
         }
 
-        if (y == fftpp::ring_t<N>::modulo - 1)
+        if (y == fftpp::ring30::modulo - 1)
         {
             return x;
         }
