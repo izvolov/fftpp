@@ -4,8 +4,8 @@
 
 #include <cstdint>
 #include <limits>
+#include <sstream>
 #include <type_traits>
-#include <iostream>
 
 TEST_CASE("Реализует модульную арифметику со сложением")
 {
@@ -41,6 +41,19 @@ TEST_CASE("Реализует модульную арифметику с умн�
 
     CHECK(fftpp::ring30{1u << 31} * 2 == fftpp::ring30{1073741823});
     CHECK(fftpp::ring30{1u << 31} * fftpp::ring30{1u << 31} == fftpp::ring30{2863311532});
+}
+
+TEST_CASE_TEMPLATE("Реализует операцию вывода в поток",
+    ring,
+    fftpp::ring8, fftpp::ring16, fftpp::ring30)
+{
+    const auto modulo_str = std::to_string(ring::modulo);
+    const auto type_str = typeid(typename ring::representation_type).name();
+
+    std::stringstream stream;
+    stream << ring{123};
+
+    CHECK(stream.str() == "basic_ring<" + modulo_str + ", " + type_str + ">{123}");
 }
 
 TEST_CASE_TEMPLATE("Реализует все операции сравнения",
