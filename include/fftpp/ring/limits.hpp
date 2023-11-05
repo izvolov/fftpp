@@ -1,16 +1,17 @@
 #pragma once
 
-#include <fftpp/ring/ring.hpp>
+#include <fftpp/ring/basic_ring.hpp>
 
 #include <concepts>
+#include <cstdint>
 #include <limits>
 
-template <std::unsigned_integral N>
-class std::numeric_limits<fftpp::ring_t<N>>: public std::numeric_limits<N>
+template <std::uint32_t Mod, std::unsigned_integral Rep>
+class std::numeric_limits<fftpp::basic_ring<Mod, Rep>>: public std::numeric_limits<Rep>
 {
 public:
-    static constexpr fftpp::ring_t<N> max () noexcept
+    static constexpr fftpp::basic_ring<Mod, Rep> max () noexcept
     {
-        return fftpp::ring_t<N>(fftpp::ring_t<N>::modulo - 1);
+        return fftpp::basic_ring<Mod, Rep>(fftpp::basic_ring<Mod, Rep>::modulo - 1);
     }
 };

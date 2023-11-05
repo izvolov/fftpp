@@ -13,13 +13,14 @@ TEST_CASE("Возводит число в степень")
     CHECK(fftpp::binpow(4l, 7l) == 16384l);
 }
 
-TEST_CASE("Работает с классом `ring_t`")
+TEST_CASE_TEMPLATE("Работает с классом `basic_ring`",
+    ring, fftpp::ring8, fftpp::ring16, fftpp::ring30)
 {
-    CHECK(fftpp::binpow(fftpp::ring_t{2u}, 10) == fftpp::ring_t{1024u});
+    CHECK(fftpp::binpow(ring{2u}, 8) == ring{256u});
 
-    const auto max = std::numeric_limits<fftpp::ring_t<std::uint32_t>>::max();
+    const auto max = std::numeric_limits<ring>::max();
     CHECK(fftpp::binpow(max, 2) == 1u);
 
-    const auto modulo = fftpp::ring_t<std::uint32_t>::modulo;
+    const auto modulo = ring::modulo;
     CHECK(fftpp::binpow(max, modulo - 1) == 1u);
 }

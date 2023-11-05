@@ -11,10 +11,10 @@
 TEST_CASE("Исходный диапазон не изменяется")
 {
     const auto size = 64ul;
-    const auto signal = std::vector<fftpp::ring_t<std::uint32_t>>(size, 999);
+    const auto signal = std::vector<fftpp::ring30>(size, 999);
 
-    const auto fft = fftpp::fft_t<fftpp::ring_t<std::uint32_t>>(size);
-    auto result = std::vector<fftpp::ring_t<std::uint32_t>>(size);
+    const auto fft = fftpp::fft_t<fftpp::ring30>(size);
+    auto result = std::vector<fftpp::ring30>(size);
     fft(signal.begin(), result.begin());
 
     for (auto i = 0ul; i < signal.size(); ++i)
@@ -28,8 +28,8 @@ TEST_CASE("Используется только необходимая част
     const auto size = 256ul;
     const auto signal = std::vector<std::uint32_t>(size);
 
-    const auto fft = fftpp::fft_t<fftpp::ring_t<std::uint32_t>>(size);
-    auto result = std::vector<fftpp::ring_t<std::uint32_t>>(size * 2, 333u);
+    const auto fft = fftpp::fft_t<fftpp::ring30>(size);
+    auto result = std::vector<fftpp::ring30>(size * 2, 333u);
     fft(signal.begin(), result.begin());
 
     for (auto i = 0ul; i < result.size() / 2; ++i)
@@ -42,17 +42,18 @@ TEST_CASE("Используется только необходимая част
     }
 }
 
-TEST_CASE("Обратное БПФ возвращает сигнал в исходное состояние")
+TEST_CASE_TEMPLATE("Обратное БПФ возвращает сигнал в исходное состояние",
+    ring, fftpp::ring8, fftpp::ring16, fftpp::ring30)
 {
     const auto size = 128ul;
-    auto signal = std::vector<std::uint32_t>(size);
+    auto signal = std::vector<typename ring::representation_type>(size);
     std::iota(signal.begin(), signal.end(), 1);
 
-    const auto fft = fftpp::fft_t<fftpp::ring_t<std::uint32_t>>(size);
-    auto result = std::vector<fftpp::ring_t<std::uint32_t>>(size);
+    const auto fft = fftpp::fft_t<ring>(size);
+    auto result = std::vector<ring>(size);
     fft(signal.begin(), result.begin());
 
-    auto inverse_result = std::vector<fftpp::ring_t<std::uint32_t>>(size);
+    auto inverse_result = std::vector<ring>(size);
     inverse(fft)(result.begin(), inverse_result.begin());
     for (auto i = 0ul; i < size; ++i)
     {

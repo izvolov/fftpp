@@ -1,139 +1,78 @@
 #pragma once
 
-#include <cassert>
+#include <fftpp/ring/basic_ring.hpp>
+
 #include <concepts>
 #include <cstdint>
-#include <ostream>
 
 namespace fftpp
 {
-    template <std::unsigned_integral N>
-    class ring_t
-    {
-    public:
-        static constexpr auto modulo = std::uint64_t{3221225473};
-        // Разрешены только такие целые, в которые влезает наш модуль.
-        static_assert(N{modulo} == modulo);
+    /*!
+        \~english
+            \brief
+                Modulo ring up to `2 ^ 8`
 
-        constexpr ring_t () = default;
+            \details
+                Eight means that the maximum size of the array to which the FFT is applicable
+                is `2 ^ 8'.
 
-        template <std::integral M>
-        constexpr ring_t (M value):
-            m_value
-            (
-                static_cast<N>(static_cast<std::uint64_t>(value) >= modulo ?
-                    static_cast<std::uint64_t>(value) % modulo :
-                    static_cast<std::uint64_t>(value))
-            )
-        {
-            assert(value >= 0);
-        }
+        \~russian
+            \brief
+                Кольцо вычетов до `2 ^ 8`
 
-        constexpr ring_t & operator += (ring_t that)
-        {
-            m_value = static_cast<N>(raw_sum(this->m_value, that.m_value));
-            return *this;
-        }
+            \details
+                Восьмёрка означает, что максимальный размер массива с элементами данного типа,
+                к которому применимо БПФ, — `2 ^ 8`.
 
-        constexpr ring_t & operator -= (ring_t that)
-        {
-            m_value = static_cast<N>(raw_difference(this->m_value, that.m_value));
-            return *this;
-        }
+        \~
+            \see basic_ring
+     */
+    using ring8 = basic_ring<257, std::uint32_t>;
 
-        constexpr ring_t & operator *= (ring_t that)
-        {
-            m_value = static_cast<N>(raw_product(this->m_value, that.m_value));
-            return *this;
-        }
+    /*!
+        \~english
+            \brief
+                Modulo ring up to `2 ^ 16`
 
-        constexpr ring_t & operator ++ ()
-        {
-            ++m_value;
-            if (m_value >= modulo)
-            {
-                m_value -= modulo;
-            }
+            \details
+                Sixteen means that the maximum size of the array to which the FFT is applicable
+                is `2 ^ 16'.
 
-            return *this;
-        }
+        \~russian
+            \brief
+                Кольцо вычетов до `2 ^ 16`
 
-        constexpr bool operator == (ring_t that) const
-        {
-            return this->m_value == that.m_value;
-        }
+            \details
+                Шестнадцать означает, что максимальный размер массива с элементами данного типа,
+                к которому применимо БПФ, — `2 ^ 16`.
 
-        template <std::unsigned_integral M>
-        constexpr bool operator == (M value) const
-        {
-            return static_cast<std::uint64_t>(m_value) == static_cast<std::uint64_t>(value);
-        }
+        \~
+            \see basic_ring
+     */
+    using ring16 = basic_ring<65537, std::uint64_t>;
 
-        constexpr bool operator < (ring_t that) const
-        {
-            return this->m_value < that.m_value;
-        }
+    /*!
+        \~english
+            \brief
+                Modulo ring up to `2 ^ 30`
 
-    private:
-        friend std::ostream & operator << (std::ostream & stream, ring_t x)
-        {
-            return stream << "ring_t<" << typeid(N).name() << ">{" << x.m_value << "}";
-        }
+            \details
+                Thirty means that the maximum size of the array to which the FFT is applicable
+                is `2 ^ 30'.
 
-        static constexpr std::uint64_t raw_sum (std::uint64_t x, std::uint64_t y)
-        {
-            assert(x < modulo);
-            assert(y < modulo);
+        \~russian
+            \brief
+                Кольцо вычетов до `2 ^ 30`
 
-            const auto sum = x + y;
-            return sum >= modulo ? sum - modulo : sum;
-        }
+            \details
+                Тридцать означает, что максимальный размер массива с элементами данного типа,
+                к которому применимо БПФ, — `2 ^ 30`.
 
-        static constexpr std::uint64_t raw_difference (std::uint64_t x, std::uint64_t y)
-        {
-            assert(x < modulo);
-            assert(y < modulo);
+        \~
+            \warning
+                `30 < 32`
 
-            if (x < y)
-            {
-                x += modulo;
-            }
-            return x - y;
-        }
-
-        static constexpr std::uint64_t raw_product (std::uint64_t x, std::uint64_t y)
-        {
-            assert(x < modulo);
-            assert(y < modulo);
-
-            const auto product = x * y;
-            return product >= modulo ? product % modulo : product;
-        }
-
-        N m_value;
-    };
-
-    template <std::integral N>
-    ring_t (N) -> ring_t<std::make_unsigned_t<std::common_type_t<N, std::uint32_t>>>;
-
-    template <std::unsigned_integral N>
-    constexpr ring_t<N> operator + (ring_t<N> x, ring_t<N> y)
-    {
-        x += y;
-        return x;
-    }
-
-    template <std::unsigned_integral N>
-    constexpr ring_t<N> operator - (ring_t<N> x, ring_t<N> y)
-    {
-        x -= y;
-        return x;
-    }
-
-    template <std::unsigned_integral N>
-    constexpr ring_t<N> operator * (ring_t<N> x, ring_t<N> y)
-    {
-        x *= y;
-        return x;
-    }
+            \see basic_ring
+     */
+    using ring30 = basic_ring<3221225473, std::uint64_t>;
 }

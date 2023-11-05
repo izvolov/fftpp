@@ -1,18 +1,19 @@
 #pragma once
 
-#include <fftpp/ring/ring.hpp>
+#include <fftpp/ring/basic_ring.hpp>
 #include <fftpp/unity.hpp>
 
 #include <concepts>
+#include <cstdint>
 
 namespace fftpp
 {
-    template <std::integral N>
-    struct unity_t<ring_t<N>>
+    template <std::uint32_t Mod, std::unsigned_integral Rep>
+    struct unity_t<basic_ring<Mod, Rep>>
     {
         constexpr auto operator () () const
         {
-            return ring_t<N>(1);
+            return basic_ring<Mod, Rep>(1);
         }
     };
 }
