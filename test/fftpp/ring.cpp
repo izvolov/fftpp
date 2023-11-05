@@ -43,6 +43,29 @@ TEST_CASE("Реализует модульную арифметику с умн�
     CHECK(fftpp::ring30{1u << 31} * fftpp::ring30{1u << 31} == fftpp::ring30{2863311532});
 }
 
+TEST_CASE_TEMPLATE("Реализует все операции сравнения",
+    ring,
+    fftpp::ring8, fftpp::ring16, fftpp::ring30)
+{
+    CHECK(ring{123} < ring{234});
+    CHECK(ring{30} > ring{3});
+    CHECK(ring{45} == ring{45});
+    CHECK(ring{79} != ring{97});
+
+    SUBCASE("в том числе с целыми числами")
+    {
+        CHECK(ring{123} < 234);
+        CHECK(ring{30} > 3u);
+        CHECK(ring{45} == 45l);
+        CHECK(ring{79} != 97ul);
+
+        CHECK(123 < ring{234});
+        CHECK(30u > ring{3});
+        CHECK(45l == ring{45});
+        CHECK(79ul != ring{97});
+    }
+}
+
 TEST_CASE_TEMPLATE("ring8 конструируется из любого целочисленного типа, который может быть неявно "
     "преобразован к типу представления (ring8::representation_type)",
     type,

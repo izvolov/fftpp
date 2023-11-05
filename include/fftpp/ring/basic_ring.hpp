@@ -95,22 +95,7 @@ namespace fftpp
             return *this;
         }
 
-        constexpr bool operator == (basic_ring that) const
-        {
-            return this->m_value == that.m_value;
-        }
-
-        template <std::unsigned_integral M>
-        constexpr bool operator == (M value) const
-        {
-            using common_type = std::common_type_t<M, representation_type>;
-            return static_cast<common_type>(m_value) == static_cast<common_type>(value);
-        }
-
-        constexpr bool operator < (basic_ring that) const
-        {
-            return this->m_value < that.m_value;
-        }
+        constexpr auto operator <=> (const basic_ring & that) const = default;
 
     private:
         friend std::ostream & operator << (std::ostream & stream, basic_ring x)
