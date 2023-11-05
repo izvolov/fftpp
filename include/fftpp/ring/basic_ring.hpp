@@ -180,4 +180,34 @@ namespace fftpp
         x *= y;
         return x;
     }
+
+    template <std::uint32_t Mod, std::unsigned_integral Rep, std::integral M>
+    constexpr basic_ring<Mod, Rep> operator + (basic_ring<Mod, Rep> x, M y)
+    {
+        assert(y > 0);
+        assert(static_cast<std::uint64_t>(y) < static_cast<std::uint64_t>(Mod));
+
+        x += basic_ring<Mod, Rep>(static_cast<Rep>(y));
+        return x;
+    }
+
+    template <std::uint32_t Mod, std::unsigned_integral Rep, std::integral M>
+    constexpr basic_ring<Mod, Rep> operator - (basic_ring<Mod, Rep> x, M y)
+    {
+        assert(y > 0);
+        assert(static_cast<std::uint64_t>(y) < static_cast<std::uint64_t>(Mod));
+
+        x -= basic_ring<Mod, Rep>(static_cast<Rep>(y));
+        return x;
+    }
+
+    template <std::uint32_t Mod, std::unsigned_integral Rep, std::integral M>
+    constexpr basic_ring<Mod, Rep> operator * (basic_ring<Mod, Rep> x, M y)
+    {
+        assert(y > 0);
+        assert(static_cast<std::uint64_t>(y) < static_cast<std::uint64_t>(Mod));
+
+        x *= basic_ring<Mod, Rep>(static_cast<Rep>(y));
+        return x;
+    }
 }
