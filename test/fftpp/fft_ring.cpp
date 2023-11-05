@@ -60,3 +60,35 @@ TEST_CASE_TEMPLATE("Обратное БПФ возвращает сигнал в
         CHECK(signal[i] == inverse_result[i]);
     }
 }
+
+TEST_CASE("Целочисленное БПФ может быть использовано для умножения многочленов")
+{
+    auto first = std::vector<unsigned>{1, 2, 3};
+    auto second = std::vector<unsigned>{2, 3, 4, 5};
+
+    const auto fft = fftpp::fft_t<fftpp::ring8>(8);
+
+    first.resize(8);
+    auto first_result = std::vector<fftpp::ring8>(first.size());
+    fft(first.begin(), first_result.begin());
+
+    second.resize(8);
+    auto second_result = std::vector<fftpp::ring8>(second.size());
+    fft(second.begin(), second_result.begin());
+
+    std::transform(first_result.begin(), first_result.end(), second_result.begin(),
+        first_result.begin(),
+        [] (auto x, auto y)
+        {
+            return x * y;
+        });
+    inverse(fft)(first_result.begin(), second_result.begin());
+    std::transform(second_result.begin(), second_result.end(), first.begin(),
+        [] (auto x)
+        {
+            return static_cast<unsigned>(x);
+        });
+
+    const auto expected = std::vector<unsigned>{2, 7, 16, 22, 22, 15, 0, 0};
+    CHECK(first == expected);
+}
