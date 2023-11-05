@@ -56,7 +56,25 @@ TEST_CASE_TEMPLATE("Реализует операцию вывода в пото
     CHECK(stream.str() == "basic_ring<" + modulo_str + ", " + type_str + ">{123}");
 }
 
-TEST_CASE_TEMPLATE("Реализует все операции сравнения",
+TEST_CASE_TEMPLATE("Реализует операторы префиксного инкремента и декремента",
+    ring,
+    fftpp::ring8, fftpp::ring16, fftpp::ring30)
+{
+    SUBCASE("префиксный инкремент")
+    {
+        CHECK(++ring{123} == ring{124});
+        CHECK(++ring{0} == ring{1});
+        CHECK(++std::numeric_limits<ring>::max() == ring{0});
+    }
+    SUBCASE("префиксный декремент")
+    {
+        CHECK(--ring{123} == ring{122});
+        CHECK(--ring{0} == std::numeric_limits<ring>::max());
+        CHECK(--ring{1} == ring{0});
+    }
+}
+
+TEST_CASE_TEMPLATE("Реализует все операции сравнения со стандартной семантикой",
     ring,
     fftpp::ring8, fftpp::ring16, fftpp::ring30)
 {

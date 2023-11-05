@@ -95,6 +95,20 @@ namespace fftpp
             return *this;
         }
 
+        constexpr basic_ring & operator -- ()
+        {
+            if (m_value > 0)
+            {
+                --m_value;
+            }
+            else
+            {
+                m_value = modulo - 1;
+            }
+
+            return *this;
+        }
+
         constexpr auto operator <=> (const basic_ring & that) const = default;
 
     private:
