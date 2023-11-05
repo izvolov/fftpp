@@ -111,6 +111,12 @@ namespace fftpp
 
         constexpr auto operator <=> (const basic_ring & that) const = default;
 
+        template <std::integral N>
+        constexpr explicit operator N () const
+        {
+            return static_cast<N>(m_value);
+        }
+
     private:
         friend std::ostream & operator << (std::ostream & stream, basic_ring x)
         {

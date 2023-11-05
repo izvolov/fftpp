@@ -74,6 +74,14 @@ TEST_CASE_TEMPLATE("Реализует операторы префиксного
     }
 }
 
+TEST_CASE_TEMPLATE("Умеет преобразовываться к стандатным целочисленным типам",
+    ring,
+    fftpp::ring8, fftpp::ring16, fftpp::ring30)
+{
+    auto x = static_cast<int>(ring{4});
+    CHECK(x == 4);
+}
+
 TEST_CASE_TEMPLATE("Реализует все операции сравнения со стандартной семантикой",
     ring,
     fftpp::ring8, fftpp::ring16, fftpp::ring30)
