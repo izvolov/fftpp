@@ -12,7 +12,7 @@ FFT++
 
 FFT++ — это заголовочная библиотека, реализующая классическое БПФ на C++ так, как это должно быть сделано на C++. Интерфейс, красота и понятность кода, а также простота в подключении и использовании не приносятся в жертву эффективности.
 
-Текущая функциональность включает прямое и обратное БПФ [в комплексных числах](#комплексное-бпф) и [в модульной арифметике](#целочисленное-бпф). Для целочисленного преобразования реализован класс [`fftpp::ring_t`](include/fftpp/ring/ring.hpp).
+Текущая функциональность включает прямое и обратное БПФ [в комплексных числах](#комплексное-бпф) и [в модульной арифметике](#целочисленное-бпф). Для целочисленного преобразования реализован класс [`fftpp::basic_ring`](include/fftpp/ring/basic_ring.hpp) и его специализации: [`fftpp::ring8`](https://github.com/izvolov/fftpp/blob/master/include/fftpp/ring/ring.hpp#L30), [`fftpp::ring16`](https://github.com/izvolov/fftpp/blob/master/include/fftpp/ring/ring.hpp#L52), [`fftpp::ring30`](https://github.com/izvolov/fftpp/blob/master/include/fftpp/ring/ring.hpp#L77).
 
 Содержание
 ----------
@@ -83,14 +83,14 @@ int main ()
 
     // Фунциональный объект, хранящий (при необходимости) предпосчитанные
     // значения, необходимые для эффективной работы алгоритма.
-    const auto fft = fftpp::fft_t<fftpp::ring_t<std::uint32_t>>(in.size());
+    const auto fft = fftpp::fft_t<fftpp::ring30>(in.size());
 
     // Прямое БПФ
-    auto out = std::vector<fftpp::ring_t<std::uint32_t>>(in.size());
+    auto out = std::vector<fftpp::ring30>(in.size());
     fft(in.begin(), out.begin());
 
     // Обратное БПФ
-    auto inv = std::vector<fftpp::ring_t<std::uint32_t>>(out.size());
+    auto inv = std::vector<fftpp::ring30>(out.size());
     inverse(fft)(out.begin(), inv.begin());
 }
 ```
